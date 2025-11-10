@@ -28,4 +28,4 @@ spring:
           isolation: TRANSACTION_REPEATABLE_READ
           pool_size: ${spring.datasource.hikari.maximum-pool-size}
 # Max expiration time in cache
-max-expiration-time: 1
+max-expiration-time: 30
