@@ -1,0 +1,143 @@
+openapi: 3.0.0
+servers:
+  - description: Server
+    url: https://localhost:8080
+info:
+  description: Permite obtener el resultado del calculo dinámico entre dos numéros aplicando un porcentaje adicional.
+  version: "1.0.0"
+  title: Dynamic Calculation API
+tags:
+  - name: Number
+    description: Number Controller
+  - name: Request History
+    description: Request History Controller
+paths:
+  /numbers/dynamic-calculation:
+    get:
+      tags:
+        - Number
+      summary: Obtiene el resultado del calculo dinámico entre dos numéros aplicando un porcentaje adicional.
+      description: "Permite obtener el resultado del calculo dinámico entre dos numéros aplicando un porcentaje adicional, el porcentaje se obtiene consultando a un servicio externo y es guardado en caché por un periodo de tiempo, en caso el servicio externo no responda, se usa el valor guardado en caché, de no existir valor en caché se devuelve error."
+      operationId: getDynamicCalculation
+      parameters:
+        - name: num1
+          in: query
+          description: Primer número para realizar el cálculo dinámico
+          required: true
+          example: 20
+          schema:
+            type: number
+        - name: num2
+          in: query
+          description: Segundo número para realizar el cálculo dinámico
+          required: true
+          example: 30
+          schema:
+            type: number
+      responses:
+        200:
+          description: Obtiene el resultado de forma exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DynamicCalculationResponse'
+        400:
+          $ref: '#/components/responses/BadRequestResponse'
+  /request-history:
+    get:
+      tags:
+        - Request History
+      summary: Obtiene el resultado del calculo dinámico entre dos numéros aplicando un porcentaje adicional.
+      description: "Permite obtener el historial de llamadas realizadas en la consulta del cálculo dinámico."
+      operationId: listRequestHistory
+      parameters:
+        - name: page
+          in: query
+          description: Número de página.
+          required: true
+          example: 1
+          schema:
+            type: integer
+        - name: size
+          in: query
+          description: Cantidad de elementos de la página
+          required: true
+          example: 5
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Obtiene el historial de llamadas de forma satisfactoria.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageResponse'
+components:
+  schemas:
+    DynamicCalculationResponse:
+      type: object
+      properties:
+        result:
+          type: number
+          description: Resultado del cáculo dinámico.
+          example: 55
+    RequestHistoryResponse:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Fecha y hora en la que se realizó la consulta.
+          example: '2025-11-09T17:15:07.714591'
+        endpoint:
+          type: string
+          description: Nombre del endpoint de la consulta.
+          example: "/v1/numbers/dynamic"
+        parameters:
+          $ref: '#/components/schemas/ParameterMap'
+        response:
+          type: number
+          description: Resultado obtenido de la consulta.
+          example: 20
+        status:
+          type: string
+          description: Estatus de la consulta.
+    ParameterMap:
+      type: object
+      description: Parámetros y valores enviados en la consulta
+      additionalProperties:
+        type: number
+    PageResponse:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          description: Total de paginas.
+          example: 1
+        totalElements:
+          type: integer
+          description: Total de elementos a devolver
+          example: 5
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestHistoryResponse'
+    ApiException:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Código response del error.
+          example: 400
+        message:
+          type: string
+          description: Mensaje referencia del error.
+        description:
+          type: string
+          description: Descripción del error.
+  responses:
+    BadRequestResponse:
+      description: Bad Request. No existe valor guardado en caché.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiException'

@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: pruebatecnica
+
+# Connection Database
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    driver-class-name: ${SPRING_DATASOURCE_CLASS_NAME}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 30000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+  jpa:
+    hibernate.ddl-auto: update
+    properties.hibernate.dialect: ${SPRING_JPA_HIBERNATE_DIALECT}
+    generate-ddl: true
+    properties:
+      hibernate:
+        connection:
+          url: ${spring.datasource.url}
+          username: ${spring.datasource.username}
+          password: ${spring.datasource.password}
+          autocommit: false
+          isolation: TRANSACTION_REPEATABLE_READ
+          pool_size: ${spring.datasource.hikari.maximum-pool-size}
+# Max expiration time in cache
+max-expiration-time: 1
