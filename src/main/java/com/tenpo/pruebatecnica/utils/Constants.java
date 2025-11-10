@@ -16,4 +16,7 @@ public class Constants {
   public static final String OK = "OK";
   public static final String FIRST_PARAMETER = "num1";
   public static final String SECOND_PARAMETER = "num2";
+
+  public static final Integer PERCENTAGE = 50;
+  public static final int MAX_REQUEST = 3;
 }

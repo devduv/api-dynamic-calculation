@@ -16,35 +16,35 @@ Contiene configuración para desplegar en Docker mediante **docker-compose**.
 
 ### 1. Clonar el repositorio
 
-Puedes clonar el proyecto desde un repositorio de ejemplo:
+```bash
+git clone https://github.com/devduv/api-dynamic-calculation
+cd api-dynamic-calculation
+```
+Imagen del proyecto en Docker Hub:
 
 ```bash
-git clone https://github.com/usuario/proyecto-calculo-dinamico.git
-cd proyecto-calculo-dinamico
+docker pull devduv/api-dynamic-calculation:0.0.1
 ```
-
-> También podrías descargar una imagen del proyecto desde Docker Hub (ejemplo):
-> ```bash
-> docker pull usuario/proyecto-calculo-dinamico:latest
-> ```
 
 ---
 
 ### 2. Compilar el proyecto con Maven
 
-Asegúrate de tener instalado **JDK 21** y **Maven 3.9+**, luego ejecuta:
+- Tener instalado JDK 21.
+- Maven 3.9+
 
+Ejecutar el siguiente comando:
 ```bash
 mvn clean install
 ```
 
-Esto compilará el proyecto y generará el archivo `.jar` dentro del directorio `target/`.
+Generará el archivo `.jar` dentro de `target/`.
 
 ---
 
 ### 3. Construir las imágenes Docker
 
-Ejecuta el siguiente comando para construir las imágenes definidas en el `docker-compose.yml`:
+Construir las imágenes definidas en el `docker-compose.yml`:
 
 ```bash
 docker-compose build
@@ -88,23 +88,28 @@ El contrato del API se encuentra disponible en:
 
 ---
 
-## Endpoints Disponibles
+## Configuración de tiempo máximo de expiración
+En el archivo application.yml (properties) se configura el
+parámetro "max-expiration-time". Tiempo máximo en minutos
+para tener almacenado en memoria caché el valor del porcentaje.
+```
+max-expiration-time: 1
+```
+---
+## Endpoints
 
 ### **GET /numbers/dynamic-calculation**
 
 Obtiene el resultado del cálculo dinámico entre dos números aplicando un porcentaje adicional obtenido desde el servicio externo simulado.
 
-**Ejemplo de uso:**
-```bash
-GET http://localhost:8080/numbers/dynamic-calculation?number1=50&number2=100
+**Ejemplo:**
+```curl
+curl --location 'http://localhost:8080/numbers/dynamic-calculation?num1=6&num2=4'
 ```
 
-**Ejemplo de respuesta:**
+**Ejemplo Response:**
 ```json
 {
-  "number1": 50,
-  "number2": 100,
-  "randomPercentage": 27,
   "result": 190.0
 }
 ```
@@ -117,66 +122,28 @@ Obtiene el historial de solicitudes realizadas al endpoint `/numbers/dynamic-cal
 
 **Ejemplo de uso:**
 ```bash
-GET http://localhost:8080/request-history
+curl --location 'http://localhost:8080/request-history?page=0&size=4'
 ```
 
-**Ejemplo de respuesta:**
+**Ejemplo Response:**
 ```json
-[
-  {
-    "number1": 50,
-    "number2": 100,
-    "randomPercentage": 27,
-    "result": 190.0,
-    "timestamp": "2025-11-09T14:32:18"
-  },
-  {
-    "number1": 20,
-    "number2": 80,
-    "randomPercentage": 10,
-    "result": 110.0,
-    "timestamp": "2025-11-09T14:40:22"
-  }
-]
+{
+  "totalPages": 1,
+  "totalElements": 1,
+  "content": [
+    {
+      "date": "2025-11-10T07:19:34.617898",
+      "endpoint": "/v1/numbers/dynamic-calculation",
+      "parameters": {
+        "num1": 6,
+        "num2": 4
+      },
+      "response": 18.70,
+      "status": "OK"
+    }
+  ]
+}
 ```
-
----
-
-## Tecnologías Utilizadas
-
-- **Java 21**
-- **Spring Boot 3.4.11**
-- **Maven**
-- **Docker / Docker Compose**
-- **PostgreSQL**
-- **OpenAPI / Swagger**
-
----
-
-## Estructura del Proyecto
-
-```
-├── src/
-│   ├── main/
-│   │   ├── java/...
-│   │   └── resources/
-│   └── test/
-├── openapi.yml
-├── Dockerfile
-├── docker-compose.yml
-├── pom.xml
-└── README.md
-```
-
----
-
-## Notas Técnicas
-
-- El mock de porcentaje se encuentra implementado como un **servicio simulado** dentro del mismo proyecto.
-- El cálculo se realiza dinámicamente en cada request, por lo tanto el porcentaje puede variar en cada ejecución.
-- El historial de solicitudes se almacena en la base de datos PostgreSQL.
-
----
 
 ## Desarrollador
 

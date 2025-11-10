@@ -2,7 +2,6 @@ package com.tenpo.pruebatecnica.web.impl;
 
 import com.tenpo.pruebatecnica.business.services.RequestService;
 import com.tenpo.pruebatecnica.web.RequestHistoryApi;
-import com.tenpo.pruebatecnica.web.RequestHistoryApi2;
 import com.tenpo.pruebatecnica.web.models.PageResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +15,13 @@ public class RequestHistoryApiImpl implements RequestHistoryApi {
 
   private RequestService requestService;
 
+  /**
+   * List request history.
+   *
+   * @param page Número de página. (required)
+   * @param size Cantidad de elementos de la página (required)
+   * @return list request history paginated
+   */
   @Override
   public ResponseEntity<PageResponse> listRequestHistory(Integer page, Integer size) {
     return new ResponseEntity<>(requestService

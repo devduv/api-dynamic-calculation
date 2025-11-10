@@ -12,7 +12,7 @@ services:
       POSTGRES_DB: dbpruebatecnica
 
   api:
-    image: pruebatecnica:0.0.1
+    image: api-dynamic-calculation:0.0.1
     container_name: api
     build: .
     ports:
